@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.math.BigInteger;
 import java.io.Console;
 
 import java.util.*;
@@ -13,6 +14,7 @@ import java.net.SocketAddress;
 
 import java.security.*;
 import java.security.spec.ECParameterSpec;
+import java.security.spec.EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.security.interfaces.ECPublicKey;
 
@@ -43,15 +45,28 @@ public class clienta1 {
             KeyPair kp = generateKeys();
             output.println(kp.getPublic().getEncoded());
 
-            String server_pk = input.readLine();
-            System.out.println("Server Public Key: " + server_pk);
+            long val = Integer.parseInt(input.readLine(), 16);
+            byte[] server_pk_bytes = BigInteger.valueOf(val).toByteArray();
+            System.out.println("Server Public Key: " + server_pk_bytes);
+
+            KeyFactory kf = KeyFactory.getInstance("EC");
+            EncodedKeySpec pkSpec = new X509EncodedKeySpec(server_pk_bytes);
+            System.out.println("pkspec: " + pkSpec.getEncoded());
+            PublicKey server_pk = kf.generatePublic(pkSpec);
+
+            // Perform key agreement
+            KeyAgreement ka = KeyAgreement.getInstance("ECDH");
+            ka.init(kp.getPrivate());
+            ka.doPhase(server_pk, true);
+            byte[] sharedSecret = ka.generateSecret();
+            System.out.println("Shared Secret: " + sharedSecret);
 
             // Closes all connections
             output.close();
             input.close();
             socket.close();
         } catch (Exception exception) {
-            logger.log(Level.SEVERE, exception.getStackTrace().toString());
+            exception.printStackTrace();
         }
     }
 

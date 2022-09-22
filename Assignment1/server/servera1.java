@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.math.BigInteger;
 import java.io.Console;
 
 import java.util.*;
@@ -43,14 +44,14 @@ public class servera1 {
                         Socket socket = server.accept();
                         handleClient(socket);
                     } catch (Exception exception) {
-                        logger.log(Level.SEVERE, exception.getStackTrace().toString());
+                        exception.getStackTrace();
                     }
                 }
             }
 
             server.close();
         } catch(Exception exception) {
-            logger.log(Level.SEVERE, exception.getStackTrace().toString());
+            exception.getStackTrace();
         } 
     }
 
@@ -69,6 +70,8 @@ public class servera1 {
         System.out.println("Client Public Key: " + line);
     
         KeyPair kp = generateKeys();
-        output.println(kp.getPublic().getEncoded());
+        String num = new BigInteger(1, kp.getPublic().getEncoded()).toString(16);
+        System.out.println(num);
+        output.println(num);
     }
 }

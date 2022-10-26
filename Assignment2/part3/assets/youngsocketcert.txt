@@ -1,0 +1,122 @@
+Step by step instructions:
+
+
+
+    Creating a self signed X.509 certificate using OpenSSL:
+
+    1. Ensure OpenSSL is installed on machine, as well as Perl (I used Strawberry), 
+    and NASM - which are prerequisites to using OpenSSL.
+
+    2. Now that everything required is installed, you must create the Certification Authority Directory.
+
+    3. Type the following commands into the terminal, in a location you wish:
+        mkdir rootca
+        cd rootca
+        mkdir certs db private
+        touch db/index
+        openssl rand -hex 16 > db/serial
+        echo 1001 > db/crlnumber
+
+    4. Next, a configuration file is required, enter the following into a file with .conf extension
+        [default]
+        name                     = rootca
+        domain_suffix            = example.com
+        aia_url                  = http://$name.$domain_suffix/$name.crt
+        crl_url                  = http://$name.$domain_suffix/$name.crl
+        default_ca               = ca_default
+        name_opt                 = utf8,esc_ctrl,multiline,lname,align
+
+        [ca_dn]
+        commonName               = "Test Root CA"
+
+        [ca_default]
+        home                     = ../rootca
+        database                 = $home/db/index
+        serial                   = $home/db/serial
+        crlnumber                = $home/db/crlnumber
+        certificate              = $home/$name.crt
+        private_key              = $home/private/$name.key
+        RANDFILE                 = $home/private/random
+        new_certs_dir            = $home/certs
+        unique_subject           = no
+        copy_extensions          = none
+        default_days             = 3650
+        default_crl_days         = 365
+        default_md               = sha256
+        policy                   = policy_c_o_match
+
+        [policy_c_o_match]
+        countryName              = optional
+        stateOrProvinceName      = optional
+        organizationName         = optional
+        organizationalUnitName   = optional
+        commonName               = supplied
+        emailAddress             = optional
+
+        [req]
+        default_bits             = 2048
+        encrypt_key              = yes
+        default_md               = sha256
+        utf8                     = yes
+        string_mask              = utf8only
+        prompt                   = no
+        distinguished_name       = ca_dn
+        req_extensions           = ca_ext
+
+        [ca_ext]
+        basicConstraints         = critical,CA:true
+        keyUsage                 = critical,keyCertSign,cRLSign
+        subjectKeyIdentifier     = hash
+
+        [sub_ca_ext]
+        authorityKeyIdentifier   = keyid:always
+        basicConstraints         = critical,CA:true,pathlen:0
+        extendedKeyUsage         = clientAuth,serverAuth
+        keyUsage                 = critical,keyCertSign,cRLSign
+        subjectKeyIdentifier     = hash
+
+        [client_ext]
+        authorityKeyIdentifier   = keyid:always
+        basicConstraints         = critical,CA:false
+        extendedKeyUsage         = clientAuth
+        keyUsage                 = critical,digitalSignature
+        subjectKeyIdentifier     = hash
+
+    5. Next a private key must be created, so that the self-signed certificate can be signed!
+    Enter the following command into the terminal:
+
+    openssl req -new -config rootca.conf -out rootca.csr -keyout private/rootca.key
+
+    You will be prompted to enter a password, this password will be used for signing in the future,
+    So it should be unique and secure.
+
+    6. Now the self-signed certificate can be created, to do this,
+    Enter the following command into the terminal:
+
+    openssl ca -selfsign -config rootca.conf -in rootca.csr -out rootca.crt -extensions ca_ext
+
+    This will create a certificate using the password created in the previous step, and will
+    output the results.
+
+    7. The self-signed certificate has been created!
+
+
+
+    Display of certificate / Running the Server and Client Files:
+
+    1. To see the display of our certificate, look to the "rootca.crt" file located in the client folder,
+    or in the server folder. The reason why it is in both folder locations is because the file successfully was sent
+    between sockets! The certificate files can be easily read in VSCode IDE, and I assume other IDEs as well.
+
+    2. To demonstrate the file transfer, you may remove the "rootca.crt" file from the server folder,
+
+    3. Then to run the files, first they must be compiled! Go to the command line, and
+    navigate to the location of "youngServer.java" in one window, and "youngClient.java" in the other,
+    Then type: javac youngServer.java in the server window, and: javac youngClient.java in the client window.
+
+    4. Now that the files are compiled, you may now type: java youngServer.java in the server window,
+    this starts the server, which awaits a client to connect to it.
+
+    5. Then type: java youngClient.java in the client window, this begins the certificate
+    transfer between the client socket and server socket. Once complete the client window will provide a
+    completion message, and the server window will provide confirmation of the downloading of the sent file.

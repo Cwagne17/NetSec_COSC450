@@ -1,6 +1,0 @@
-Use GPG4Win to set up OpenPGP certificates for 2 users A and B in your group. 
-Exchange the public OpenPGP certificates of A and B using email (either send as email text or as an attachment). Do not use a socket program. 
-A uses GPG4Win to sign and encrypt a small file test.txt. 
-B uses GPG4Win to decrypt and verify the results. 
-Write a short document groupnamegpg.txt that provides step-by-step instructions on how to redo everything A and B did above. 
-Include screenshots with the actual results you got when using GPG4Win to help redo what A and B did.

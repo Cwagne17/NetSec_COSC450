@@ -1,0 +1,81 @@
+# PGP4Win
+
+All of the screen shot are labeled and can be found in the assets directory.
+
+## Task 1: Use GPG4Win to set up OpenPGP certificates for 2 users A and B in your group.
+
+    In step-by-step guide, cwagne17@students.towson.edu will be associated with User A, and christopherwagner0700@gmail.com will be associated with User B.
+
+### Open Kleopatra to create a new PGP key pair & Certificate
+
+    On UserA's machine, open Kleopatra to create a key pair.
+
+    Kleopatra Home Screen: refer to assets/01_Kelopatra_Home_Screen.png
+
+    Enter a name and email address to associate to the certificate. Optionally add a passphrase.
+
+    Create Key Pair: refer to assets/02_Create_Key_Pair.png
+
+    If adding a passphrase enter a phrase. The example uses 'test123'.
+
+    Add Key Pair Passphrase: refer to assets/03_Add_Passphrase.png  
+
+    Note that 'test123' is not a strong password and Kleopatra will suggest making a stronger password before continuing.
+
+    Success Cert Created: refer to assets/04_Success_Cert_Created.png
+
+### Exchange the public OpenPGP certificates of A and B using email.
+
+    Export the certificate from Kleopatra at the top of the dashboard and choose the file path to export the certificate to.
+
+    Export Certificate from Kleopatra: refer to assets/05_Export_Certificate.png
+
+    In an email attach te exported certificate to send to User B.
+
+    Send Certificate in Email: refer to assets/06_Share_Certificate.png
+
+### User A uses GPG4Win to sign and encrypt a small file test.txt.
+
+    In this example a test.txt file was created with a transcript of the Gettysburg address. The content of the file is not critical to what is being accomplished in this task.
+
+    Create Test Text File: refer to assets/07_Create_Test_Text_File.png
+
+    User A then encrypts the content of test.txt by highlighting their Certificate, clicking Sign/Encrypt at the top of the screen, then choosing the file path to encrypt.
+
+    Sign and Encrypt Test File: refer to assets/08_Sign_Encrypt_Test_File.png
+
+    A window appears after choosing the file that gives more options when signing/encrypting. The default values are sufficient. Options are available however to include names, email addresses, and passwords when encrypting.
+
+    Sign and Encrypt Test File: refer to assets/09_Sign_Encrypt_Test_File.png
+
+    Because a passphrase was set on the key pair, use the same passphrase to open the key pair to encrypt the test.txt file with.
+
+    The file will then be encrypted and placed in your file system as test.txt.gpg.
+
+    At this point transfer the encrypted file to UserB for them to decrypt.
+
+### B uses GPG4Win to decrypt and verify the results.
+
+    After User B downloads both the Certificate and Encrypted file attached in emails, User A's certificate can be imported to Kleopatra.
+
+    User B Imports User A Certificate: refer to assets/10_UserB_Imports_UserA_Certificate.png
+
+    User A's certificate will need to be verified and a way to do this is to verify that the cert is from User A is by having User B confirm it is.
+
+    For this to happen, User B must create a certificate.
+
+    Create User B Key for Verification: refer to assets/11_Create_UserB_Key_For_Verification.png
+
+    Once a certificate is create, User B can verify that User A has a valid certificate. This would be done by contacting User A to authenticate. This is the basis of how peer-to-peer certifactes can have trust. X.509 on the other hand would have a trust anchor of some sort to verify them.
+
+    Certify User A With User B Cert: refer to assets/12_Certify_UserA_With_UserB_Cert.png
+
+    User B can use User A's verified certificate to Decrypt the encrypted test.txt.gpg file.
+
+    Decrypt Test File with Imported Certificate: refer to assets/13_Decrypt_Test_File.png
+
+    A successful message or error message will occur depending if Kleopatra was able to decrypt with User A's certificate.
+
+    In this case, we are able to successfully decrypt User A's encrypted message and retrieve the Getty's Burg Address.
+
+    Successful Decryption: refer to assets/14_Successful_Decryption.png
